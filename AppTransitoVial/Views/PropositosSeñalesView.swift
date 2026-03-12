@@ -23,8 +23,6 @@ struct PropositosSeñalesView: View {
     }
 }
 
-
-
 #Preview {
     PropositosSeñalesView()
 }
