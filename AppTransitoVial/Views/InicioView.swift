@@ -15,7 +15,7 @@ struct InicioView: View {
         TabView(selection: $seleccion) {
             
             ZStack {
-                Color(red: 0.05, green: 0.08, blue: 0.12)
+                Color(Color.background)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 25) {
