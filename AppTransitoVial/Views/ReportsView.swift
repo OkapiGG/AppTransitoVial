@@ -125,8 +125,6 @@ struct ReportsView: View {
     }
 }
 
-
-
 #Preview {
     ReportsView()
 }
