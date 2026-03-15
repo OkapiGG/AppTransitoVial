@@ -10,16 +10,15 @@ import MapKit
 
 struct MapCard: View {
     
-    @State private var posicion = MapCameraPosition.region(
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 19.3621, longitude: -99.1812),
-            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-        )
-    )
+    @StateObject private var ubicacion = MapViewModel()
+    
+//    private let coordenadasCentro = CLLocationCoordinate2D(
+//        latitude: 14.90541,
+//        longitude: -92.25891
+//    )
     
     var body: some View {
         ZStack{
-            
             VStack{
                 HStack {
                     Text("Ubicación del incidente")
@@ -35,11 +34,17 @@ struct MapCard: View {
                             .font(.subheadline)
                             .fontWeight(.bold)
                         }
+                    
                 }.padding(.horizontal)
                 
-                
-                
-                
+                Map(position: $ubicacion.ubicacion){
+                    UserAnnotation()
+                }.mapControls{
+                    MapUserLocationButton()
+                }.onAppear {
+                    ubicacion.pedirPermisoUbicacion()
+                }
+                .frame(height: 200)
             }
         }
     }

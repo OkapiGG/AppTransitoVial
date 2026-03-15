@@ -86,24 +86,8 @@ struct ReportsView: View {
                 }.padding()
                 
                 VStack{
-                    HStack {
-                        Text("Ubicacion del Incidente")
-                            .foregroundStyle(Color.white)
-                        Spacer()
-                        HStack{
-                            Image(systemName: "mappin.and.ellipse")
-                                .font(.system(size: 20))
-                                .foregroundStyle(Color.blue)
-                            
-                            Text("Mi ubicación")
-                                .foregroundStyle(Color.blue)
-                        }
-                    }
                     
-                    Rectangle()
-                        .fill(Color.white)
-                        .frame(width: .infinity, height: 150)
-                        .padding(.bottom, 20)
+                    MapCard().padding(.bottom, 10)
                     
                     Button {
                         
@@ -116,10 +100,10 @@ struct ReportsView: View {
                         }
                     }
                     .padding(10)
-                    .frame(width: .infinity, height: 50)
+                    .frame(height: 50)
                     .background(Color.blue)
                     .cornerRadius(12)
-                }.padding()
+                }.padding(.horizontal)
             }
         }.ignoresSafeArea()
     }
