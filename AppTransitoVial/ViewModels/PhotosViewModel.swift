@@ -8,21 +8,22 @@
 import Foundation
 import PhotosUI
 import SwiftUI
+import Combine
 
-//class PhotosViewModel: ObservableObject{
+//class PhotosViewModel: NSObject, ObservableObject {
+//    var objectWillChange: ObservableObjectPublisher
 //    
-//    @Published var selectedItem: PhotosPickerItem?
+////    var fotos: [UIImage] = []
 //    
-//    @Published var loadedImageData: [Data] = []
-//    
-//    func loadImageData() async{
-//        
-//        guard let item = selectedItem else{
-//            return
-//        }
-//        
-//        do
+////    @Published var assets: [PHAsset] = []
+// 
+//    func mostrarFotosUI() {
 //        
 //    }
 //    
+//    
+//    
 //}
+
+
+
