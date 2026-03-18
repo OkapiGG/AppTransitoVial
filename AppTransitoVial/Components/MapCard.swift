@@ -12,10 +12,6 @@ struct MapCard: View {
     
     @StateObject private var ubicacion = MapViewModel()
     
-//    private let coordenadasCentro = CLLocationCoordinate2D(
-//        latitude: 14.90541,
-//        longitude: -92.25891
-//    )
     
     var body: some View {
         ZStack{

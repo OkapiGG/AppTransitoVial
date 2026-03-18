@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct ReportsView: View {
     
     @State private var selection: String = "Selecciona un tipo de señal"
     @State private var description: String = ""
-    
+    @State private var selectedItem: [PhotosPickerItem] = []
+
     var body: some View {
         ZStack{
             Color(Color.background)
@@ -76,12 +78,20 @@ struct ReportsView: View {
                         .foregroundStyle(.white)
                     
                     HStack(spacing: 40){
+                        PhotosPicker(selection: $selectedItem, matching: .images){
+                            Rectangle()
+                                .fill(Color.white.opacity(0.1))
+                                .frame(width: 150, height: 150)
+                                .overlay(
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 30))
+                                        .foregroundColor(.white)
+                                )
+                        }
+                        
                         Rectangle()
-                            .fill(Color.white)
                             .frame(width: 150, height: 150)
-                        Rectangle()
-                            .fill(Color.white)
-                            .frame(width: 150, height: 150)
+
                     }
                 }.padding()
                 
