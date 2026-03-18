@@ -83,11 +83,18 @@ struct ReportsView: View {
                                 .fill(Color.white.opacity(0.1))
                                 .frame(width: 150, height: 150)
                                 .overlay(
-                                    Image(systemName: "plus")
-                                        .font(.system(size: 30))
-                                        .foregroundColor(.white)
+                                    VStack {
+                                        Image(systemName: "camera")
+                                            .font(.system(size: 30))
+                                            .foregroundColor(.white)
+                                            .padding(.bottom, 8)
+                                        
+                                        Text("Agregar Foto")
+                                            .font(.subheadline)
+                                            .foregroundStyle(Color.white)
+                                    }
                                 )
-                        }
+                        }.cornerRadius(15)
                         
                         Rectangle()
                             .frame(width: 150, height: 150)
