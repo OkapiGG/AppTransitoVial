@@ -13,12 +13,37 @@ struct ReportsView: View {
     @State private var selection: String = "Selecciona un tipo de señal"
     @State private var description: String = ""
     @State private var selectedItem: [PhotosPickerItem] = []
+    @State private var selectedImages: [UIImage] = []
 
     var body: some View {
         ZStack{
             Color(Color.background)
                 .ignoresSafeArea()
             VStack{
+                
+                
+                //Titulo, Comentado por que queda descuadrado #ool
+//                HStack{
+//                    Image(systemName: "arrow")
+//                        .font(.system(size: 14, weight: .bold))
+//                        .foregroundColor(Color.white)
+//                    
+//                    Text("Reportar Señal")
+//                        .foregroundStyle(.white)
+//                        .font(.title)
+//                    
+//                    Spacer()
+//                    
+//                    Button(action: {
+//                        
+//                    }){
+//                        Label("Ayuda", systemImage: "questionmark")
+//                            .font(.subheadline)
+//                            .fontWeight(.bold)
+//                    }
+//
+//                }
+                
                 VStack{
                     Text("Tipo de señal")
                         .foregroundStyle(.white)
@@ -96,8 +121,29 @@ struct ReportsView: View {
                                 )
                         }.cornerRadius(15)
                         
-                        Rectangle()
-                            .frame(width: 150, height: 150)
+                        ZStack {
+                            Rectangle()
+                                .fill(Color.white.opacity(0.1))
+                            
+                            if let firstImage = selectedImages.first {
+                                Image(uiImage: firstImage)
+                                    .resizable()
+                                    .scaledToFill()
+                            } else {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "photo")
+                                        .font(.system(size: 30))
+                                        .foregroundColor(.white.opacity(0.7))
+                                    
+                                    Text("Vista previa")
+                                        .font(.subheadline)
+                                        .foregroundStyle(Color.white.opacity(0.7))
+                                }
+                            }
+                        }
+                        .frame(width: 150, height: 150)
+                        .clipped()
+                        .cornerRadius(15)
 
                     }
                 }.padding()
@@ -122,7 +168,24 @@ struct ReportsView: View {
                     .cornerRadius(12)
                 }.padding(.horizontal)
             }
-        }.ignoresSafeArea()
+        }
+        .ignoresSafeArea()
+        .task(id: selectedItem) {
+            await loadSelectedImages()
+        }
+    }
+    
+    private func loadSelectedImages() async {
+        var loadedImages: [UIImage] = []
+        
+        for item in selectedItem {
+            if let data = try? await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                loadedImages.append(image)
+            }
+        }
+        
+        selectedImages = loadedImages
     }
 }
 
