@@ -11,38 +11,15 @@ import PhotosUI
 struct ReportsView: View {
     
     @State private var selection: String = "Selecciona un tipo de señal"
-    @State private var description: String = ""
-    @State private var selectedItem: [PhotosPickerItem] = []
-    @State private var selectedImages: [UIImage] = []
+    @State private var descripcion: String = ""
+    @State private var itemSeleccionado: [PhotosPickerItem] = []
+    @State private var imagenSeleccionada: [UIImage] = []
 
     var body: some View {
         ZStack{
             Color(Color.background)
                 .ignoresSafeArea()
             VStack{
-                
-                
-                //Titulo, Comentado por que queda descuadrado #ool
-//                HStack{
-//                    Image(systemName: "arrow")
-//                        .font(.system(size: 14, weight: .bold))
-//                        .foregroundColor(Color.white)
-//                    
-//                    Text("Reportar Señal")
-//                        .foregroundStyle(.white)
-//                        .font(.title)
-//                    
-//                    Spacer()
-//                    
-//                    Button(action: {
-//                        
-//                    }){
-//                        Label("Ayuda", systemImage: "questionmark")
-//                            .font(.subheadline)
-//                            .fontWeight(.bold)
-//                    }
-//
-//                }
                 
                 VStack{
                     Text("Tipo de señal")
@@ -80,12 +57,12 @@ struct ReportsView: View {
                         .foregroundStyle(.white)
                     
                     ZStack(alignment: .leading) {
-                        if description.isEmpty {
+                        if descripcion.isEmpty {
                             Text("Describe el daño (ej. grafiti, doblada, etc)...")
                                 .foregroundStyle(Color.white.opacity(0.6))
                                 .padding(.horizontal, 15)
                         }
-                        TextField("", text: $description)
+                        TextField("", text: $descripcion)
                             .foregroundStyle(.white)
                             .tint(.white)
                             .padding()
@@ -103,7 +80,7 @@ struct ReportsView: View {
                         .foregroundStyle(.white)
                     
                     HStack(spacing: 40){
-                        PhotosPicker(selection: $selectedItem, matching: .images){
+                        PhotosPicker(selection: $itemSeleccionado, matching: .images){
                             Rectangle()
                                 .fill(Color.white.opacity(0.1))
                                 .frame(width: 150, height: 150)
@@ -125,19 +102,17 @@ struct ReportsView: View {
                             Rectangle()
                                 .fill(Color.white.opacity(0.1))
                             
-                            if let firstImage = selectedImages.first {
-                                Image(uiImage: firstImage)
+                            if let primerImagen = imagenSeleccionada.first {
+                                Image(uiImage: primerImagen)
                                     .resizable()
                                     .scaledToFill()
                             } else {
                                 VStack(spacing: 8) {
                                     Image(systemName: "photo")
                                         .font(.system(size: 30))
-                                        .foregroundColor(.white.opacity(0.7))
                                     
                                     Text("Vista previa")
                                         .font(.subheadline)
-                                        .foregroundStyle(Color.white.opacity(0.7))
                                 }
                             }
                         }
@@ -170,22 +145,20 @@ struct ReportsView: View {
             }
         }
         .ignoresSafeArea()
-        .task(id: selectedItem) {
-            await loadSelectedImages()
+        .task(id: itemSeleccionado) {
+            await cargarImagenSeleccionada()
         }
     }
     
-    private func loadSelectedImages() async {
-        var loadedImages: [UIImage] = []
-        
-        for item in selectedItem {
+    private func cargarImagenSeleccionada() async {
+        var imagenCargada: [UIImage] = []
+        for item in itemSeleccionado {
             if let data = try? await item.loadTransferable(type: Data.self),
-               let image = UIImage(data: data) {
-                loadedImages.append(image)
+               let imagen = UIImage(data: data) {
+                imagenCargada.append(imagen)
             }
         }
-        
-        selectedImages = loadedImages
+        imagenSeleccionada = imagenCargada
     }
 }
 
