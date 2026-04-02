@@ -16,12 +16,40 @@ struct ReportsView: View {
     @State private var imagenSeleccionada: [UIImage] = []
 
     var body: some View {
-        ZStack{
+        ZStack {
             Color(Color.background)
                 .ignoresSafeArea()
-            VStack{
-                
-                VStack{
+
+            VStack(spacing: 0) {
+                HStack(spacing: 16) {
+                    Button {
+                    } label: {
+                        Image(systemName: "arrow.left")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(.white)
+                    }
+
+                    Text("Reportar una Señal")
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+
+                    Spacer()
+
+                    Button {
+                    } label: {
+                        Text("Ayuda")
+                            .font(.callout.weight(.semibold))
+                            .foregroundStyle(.blue)
+                    }
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 20)
+                .padding(.bottom, 18)
+
+                Divider()
+                    .overlay(Color.white.opacity(0.08))
+
+                VStack {
                     Text("Tipo de señal")
                         .foregroundStyle(.white)
                     Menu {
@@ -50,9 +78,10 @@ struct ReportsView: View {
                         )
                     }
                     .accentColor(.white)
-                }.padding()
-            
-                VStack{
+                }
+                .padding()
+
+                VStack {
                     Text("Descripción del Problema")
                         .foregroundStyle(.white)
                     
@@ -73,9 +102,10 @@ struct ReportsView: View {
                                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
                             )
                     }
-                }.padding()
-                
-                VStack{
+                }
+                .padding()
+
+                VStack {
                     Text("Evidencia Visual")
                         .foregroundStyle(.white)
                     
@@ -110,9 +140,12 @@ struct ReportsView: View {
                                 VStack(spacing: 8) {
                                     Image(systemName: "photo")
                                         .font(.system(size: 30))
+                                        .foregroundColor(.white)
+                                        .padding(.bottom, 8)
                                     
                                     Text("Vista previa")
                                         .font(.subheadline)
+                                        .foregroundStyle(Color.white)
                                 }
                             }
                         }
@@ -121,16 +154,16 @@ struct ReportsView: View {
                         .cornerRadius(15)
 
                     }
-                }.padding()
-                
-                VStack{
-                    
-                    MapCard().padding(.bottom, 10)
-                    
+                }
+                .padding()
+
+                VStack {
+                    MapCard()
+                        .padding(.bottom, 10)
+
                     Button {
-                        
                     } label: {
-                        HStack{
+                        HStack {
                             Text("Enviar Reporte")
                                 .foregroundStyle(Color.white)
                             Image(systemName: "paperplane")
@@ -141,10 +174,10 @@ struct ReportsView: View {
                     .frame(height: 50)
                     .background(Color.blue)
                     .cornerRadius(12)
-                }.padding(.horizontal)
+                }
+                .padding(.horizontal)
             }
         }
-        .ignoresSafeArea()
         .task(id: itemSeleccionado) {
             await cargarImagenSeleccionada()
         }
