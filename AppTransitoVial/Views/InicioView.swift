@@ -107,6 +107,7 @@ struct InicioView: View {
                     Label("Catalago", systemImage: "rectangle.3.group")
                 }
                 .tag(2)
+            
         }
         .accentColor(.blue)
     }
