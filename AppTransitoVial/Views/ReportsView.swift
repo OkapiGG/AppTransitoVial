@@ -10,6 +10,7 @@ import PhotosUI
 
 struct ReportsView: View {
     
+    @Environment(\.dismiss) private var dismiss
     @State private var selection: String = "Selecciona un tipo de señal"
     @State private var descripcion: String = ""
     @State private var itemSeleccionado: [PhotosPickerItem] = []
@@ -23,6 +24,7 @@ struct ReportsView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 16) {
                     Button {
+                        dismiss()
                     } label: {
                         Image(systemName: "arrow.left")
                             .font(.system(size: 20, weight: .semibold))

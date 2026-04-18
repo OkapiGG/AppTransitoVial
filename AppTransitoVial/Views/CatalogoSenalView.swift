@@ -35,10 +35,6 @@ struct CatalogoSenalView: View {
                             Button {
                                 dismiss()
                             } label: {
-                                Image(systemName: "arrow.left")
-                                    .font(.system(size: 20, weight: .semibold))
-                                    .foregroundStyle(.white)
-                                    .frame(width: 44, height: 44)
                             }
                             .buttonStyle(.plain)
 

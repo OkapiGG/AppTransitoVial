@@ -9,6 +9,7 @@ import SwiftUI
 struct InicioView: View {
     
     @State private var seleccion: Int = 1
+    @State private var isShowingReports: Bool = false
     
     var body: some View {
         
@@ -32,30 +33,18 @@ struct InicioView: View {
                     .padding(.horizontal)
                     
                     ZStack(alignment: .bottomLeading) {
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(height: 220)
+                        MapCard()
                         
                         Image("calle")
                             .resizable()
                             .scaledToFill()
                             .frame(height: 220)
-                            .clipShape(RoundedRectangle(cornerRadius: 25))
-                        
-                        HStack {
-                            Image(systemName: "checkmark.shield.fill")
-                                .foregroundColor(.blue)
-                                .font(.title2)
-                        }
-                        .padding()
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(15)
-                        .padding()
+
                     }
                     .padding(.horizontal)
                     
                     VStack(spacing: 10) {
-                        Text("¡Bienvenido a\nSeñalVial!")
+                        Text("¡Bienvenido!")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
@@ -78,7 +67,9 @@ struct InicioView: View {
                                 .cornerRadius(15)
                         }
                         
-                        Button(action: {}) {
+                        Button(action: {
+                            isShowingReports = true
+                        }) {
                             Label("Reportar una señal", systemImage: "camera.fill")
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -102,13 +93,16 @@ struct InicioView: View {
                 Label("Inicio", systemImage: "house")
             }
             
-            PropositosSeñalesView()
+            CatalogoSenalView()
                 .tabItem {
                     Label("Catalago", systemImage: "rectangle.3.group")
                 }
                 .tag(2)
         }
         .accentColor(.blue)
+        .sheet(isPresented: $isShowingReports) {
+            ReportsView()
+        }
     }
 }
 
