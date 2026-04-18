@@ -5,17 +5,45 @@
 //  Created by Emanuel Perez Altuzar on 10/03/26.
 //
 import SwiftUI
+import UIKit
 
 struct InicioView: View {
     
     @State private var seleccion: Int = 1
+
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(Color(red: 0.05, green: 0.08, blue: 0.12))
+
+        let normalColor = UIColor(white: 0.72, alpha: 1)
+        let selectedColor = UIColor.systemBlue
+
+        appearance.stackedLayoutAppearance.normal.iconColor = normalColor
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+        appearance.stackedLayoutAppearance.selected.iconColor = selectedColor
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
+
+        appearance.inlineLayoutAppearance.normal.iconColor = normalColor
+        appearance.inlineLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+        appearance.inlineLayoutAppearance.selected.iconColor = selectedColor
+        appearance.inlineLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
+
+        appearance.compactInlineLayoutAppearance.normal.iconColor = normalColor
+        appearance.compactInlineLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+        appearance.compactInlineLayoutAppearance.selected.iconColor = selectedColor
+        appearance.compactInlineLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
     
     var body: some View {
         
         TabView(selection: $seleccion) {
             
             ZStack {
-                Color(red: 0.05, green: 0.08, blue: 0.12)
+                Color(Color.background)
                     .ignoresSafeArea()
                 
                 VStack(spacing: 25) {
@@ -102,14 +130,28 @@ struct InicioView: View {
                 Label("Inicio", systemImage: "house")
             }
             
-            PropositosSeñalesView()
+            CatalogoSenalView()
                 .tabItem {
                     Label("Catalago", systemImage: "rectangle.3.group")
                 }
                 .tag(2)
             
+            PropositosSeñalesView()
+                .tabItem {
+                    Label("Propósitos", systemImage: "exclamationmark.triangle.fill")
+                }
+            .tag(3)
+            
+            PerfilView()
+                .tabItem {
+                    Label("Perfil", systemImage: "person.crop.circle")
+                }
+            
         }
-        .accentColor(.blue)
+        .tint(.blue)
+        .toolbarBackground(Color(red: 0.05, green: 0.08, blue: 0.12), for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
     }
 }
 
