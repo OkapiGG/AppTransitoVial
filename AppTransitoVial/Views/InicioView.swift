@@ -5,11 +5,42 @@
 //  Created by Emanuel Perez Altuzar on 10/03/26.
 //
 import SwiftUI
+import UIKit
+import CoreLocation
 
 struct InicioView: View {
     
     @State private var seleccion: Int = 1
     @State private var isShowingReports: Bool = false
+    @State private var selectedLocationName = "Ubicación no seleccionada"
+    @State private var selectedCoordinate: CLLocationCoordinate2D?
+
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(Color(red: 0.05, green: 0.08, blue: 0.12))
+
+        let normalColor = UIColor(white: 0.72, alpha: 1)
+        let selectedColor = UIColor.systemBlue
+
+        appearance.stackedLayoutAppearance.normal.iconColor = normalColor
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+        appearance.stackedLayoutAppearance.selected.iconColor = selectedColor
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
+
+        appearance.inlineLayoutAppearance.normal.iconColor = normalColor
+        appearance.inlineLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+        appearance.inlineLayoutAppearance.selected.iconColor = selectedColor
+        appearance.inlineLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
+
+        appearance.compactInlineLayoutAppearance.normal.iconColor = normalColor
+        appearance.compactInlineLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: normalColor]
+        appearance.compactInlineLayoutAppearance.selected.iconColor = selectedColor
+        appearance.compactInlineLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: selectedColor]
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
     
     var body: some View {
         
@@ -33,7 +64,10 @@ struct InicioView: View {
                     .padding(.horizontal)
                     
                     ZStack(alignment: .bottomLeading) {
-                        MapCard()
+                        MapCard(
+                            selectedLocationName: $selectedLocationName,
+                            selectedCoordinate: $selectedCoordinate
+                        )
                         
                         Image("calle")
                             .resizable()
@@ -58,7 +92,9 @@ struct InicioView: View {
                     }
                     
                     VStack(spacing: 15) {
-                        Button(action: {}) {
+                        Button(action: {
+                            seleccion = 2
+                        }) {
                             Label("Ver señales de tránsito", systemImage: "book.fill")
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -98,8 +134,23 @@ struct InicioView: View {
                     Label("Catalago", systemImage: "rectangle.3.group")
                 }
                 .tag(2)
+            
+            PropositosSeñalesView()
+                .tabItem {
+                    Label("Propósitos", systemImage: "exclamationmark.triangle.fill")
+                }
+            .tag(3)
+            
+            PerfilView()
+                .tabItem {
+                    Label("Perfil", systemImage: "person.crop.circle")
+                }
+            
         }
-        .accentColor(.blue)
+        .tint(.blue)
+        .toolbarBackground(Color(red: 0.05, green: 0.08, blue: 0.12), for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
         .sheet(isPresented: $isShowingReports) {
             ReportsView()
         }
