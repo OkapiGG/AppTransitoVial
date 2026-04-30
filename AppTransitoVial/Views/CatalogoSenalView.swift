@@ -10,50 +10,55 @@ import SwiftUI
 struct CatalogoSenalView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = CatalogoSenalViewModel()
+    let showsBackButton: Bool
+
+    init(showsBackButton: Bool = true) {
+        self.showsBackButton = showsBackButton
+    }
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color(red: 0.06, green: 0.09, blue: 0.13)
-                    .ignoresSafeArea()
+        ZStack {
+            Color(red: 0.06, green: 0.09, blue: 0.13)
+                .ignoresSafeArea()
 
-                VStack(spacing: 16) {
-                    header
-                    searchBar
-                    filterChips
+            VStack(spacing: 16) {
+                header
+                searchBar
+                filterChips
 
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 22) {
-                            ForEach(viewModel.visibleSections) { section in
-                                SignalCatalogSectionView(section: section)
-                            }
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        ForEach(viewModel.visibleSections) { section in
+                            SignalCatalogSectionView(section: section)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 24)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 }
-                .padding(.top, 8)
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .padding(.top, 8)
         }
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     private var header: some View {
         ZStack {
-            Text("Clasificación de Señales")
+            Text("Catalagos de Señales")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
             HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "arrow.left")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(width: 40, height: 40)
+                if showsBackButton {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "arrow.left")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 40, height: 40)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
 
                 Spacer()
             }

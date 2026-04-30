@@ -11,6 +11,16 @@ struct PropositosSeñalesView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var searchText = ""
     @State private var selectedFilter: SignalPurposeFilter = .all
+    let onShowCatalog: (() -> Void)?
+    let showsBackButton: Bool
+
+    init(
+        onShowCatalog: (() -> Void)? = nil,
+        showsBackButton: Bool = true
+    ) {
+        self.onShowCatalog = onShowCatalog
+        self.showsBackButton = showsBackButton
+    }
 
     private let sections: [SignalPurposeSection] = [
         SignalPurposeSection(
@@ -18,9 +28,30 @@ struct PropositosSeñalesView: View {
             description: "Indican limitaciones, prohibiciones o restricciones legales sobre el uso de la via. Su cumplimiento es obligatorio.",
             accent: Color(red: 0.96, green: 0.38, blue: 0.33),
             cards: [
-                SignalPurposeCard(title: "ALTO", icon: "stop.fill", accent: Color(red: 0.96, green: 0.38, blue: 0.33)),
-                SignalPurposeCard(title: "NO ENTRAR", icon: "xmark", accent: Color(red: 0.96, green: 0.38, blue: 0.33)),
-                SignalPurposeCard(title: "LIMITE 80", icon: "gauge.with.dots.needle.33percent", accent: Color(red: 0.96, green: 0.38, blue: 0.33))
+                SignalPurposeCard(
+                    title: "ALTO",
+                    description: "Obligatorio detenerse por completo antes de continuar.",
+                    kindLabel: "Señal reglamentaria",
+                    icon: "stop.fill",
+                    accent: Color(red: 0.96, green: 0.38, blue: 0.33),
+                    signStyle: .octagon
+                ),
+                SignalPurposeCard(
+                    title: "NO ENTRAR",
+                    description: "Prohibe el acceso de vehiculos en ese sentido.",
+                    kindLabel: "Señal reglamentaria",
+                    icon: "minus",
+                    accent: Color(red: 0.96, green: 0.38, blue: 0.33),
+                    signStyle: .circle
+                ),
+                SignalPurposeCard(
+                    title: "LIMITE 80",
+                    description: "Indica la velocidad maxima permitida en la via.",
+                    kindLabel: "Señal reglamentaria",
+                    icon: "number.circle.fill",
+                    accent: Color(red: 0.96, green: 0.38, blue: 0.33),
+                    signStyle: .speedLimit
+                )
             ],
             filter: .restrictive
         ),
@@ -29,9 +60,30 @@ struct PropositosSeñalesView: View {
             description: "Advierten a los usuarios sobre la existencia de un peligro o situaciones imprevistas en la ruta.",
             accent: Color(red: 0.91, green: 0.67, blue: 0.22),
             cards: [
-                SignalPurposeCard(title: "CURVA", icon: "arrow.turn.up.right", accent: Color(red: 0.91, green: 0.67, blue: 0.22), diamond: true),
-                SignalPurposeCard(title: "ESCUELA", icon: "graduationcap.fill", accent: Color(red: 0.91, green: 0.67, blue: 0.22), diamond: true),
-                SignalPurposeCard(title: "PELIGRO", icon: "exclamationmark", accent: Color(red: 0.91, green: 0.67, blue: 0.22), diamond: true)
+                SignalPurposeCard(
+                    title: "CURVA",
+                    description: "Advierte una curva peligrosa mas adelante.",
+                    kindLabel: "Señal preventiva",
+                    icon: "arrow.turn.up.right",
+                    accent: Color(red: 0.91, green: 0.67, blue: 0.22),
+                    signStyle: .diamond
+                ),
+                SignalPurposeCard(
+                    title: "ESCUELA",
+                    description: "Indica zona escolar y pide reducir velocidad.",
+                    kindLabel: "Señal preventiva",
+                    icon: "graduationcap.fill",
+                    accent: Color(red: 0.91, green: 0.67, blue: 0.22),
+                    signStyle: .diamond
+                ),
+                SignalPurposeCard(
+                    title: "PELIGRO",
+                    description: "Señala un riesgo o condicion imprevista en la via.",
+                    kindLabel: "Señal preventiva",
+                    icon: "exclamationmark",
+                    accent: Color(red: 0.91, green: 0.67, blue: 0.22),
+                    signStyle: .diamond
+                )
             ],
             filter: .preventive
         ),
@@ -40,20 +92,33 @@ struct PropositosSeñalesView: View {
             description: "Guian al usuario, proporcionando informacion sobre destinos, servicios y lugares de interes.",
             accent: Color(red: 0.29, green: 0.53, blue: 0.98),
             cards: [
-                SignalPurposeCard(title: "HOSPITAL", icon: "cross.case.fill", accent: Color(red: 0.29, green: 0.53, blue: 0.98)),
-                SignalPurposeCard(title: "GASOLINERA", icon: "fuelpump.fill", accent: Color(red: 0.29, green: 0.53, blue: 0.98)),
-                SignalPurposeCard(title: "PARKING", icon: "parkingsign", accent: Color(red: 0.29, green: 0.53, blue: 0.98))
+                SignalPurposeCard(
+                    title: "HOSPITAL",
+                    description: "Indica la cercania de servicios medicos.",
+                    kindLabel: "Señal informativa",
+                    icon: "cross.case.fill",
+                    accent: Color(red: 0.29, green: 0.53, blue: 0.98),
+                    signStyle: .square
+                ),
+                SignalPurposeCard(
+                    title: "GASOLINERA",
+                    description: "Muestra un punto de abastecimiento de combustible.",
+                    kindLabel: "Señal informativa",
+                    icon: "fuelpump.fill",
+                    accent: Color(red: 0.29, green: 0.53, blue: 0.98),
+                    signStyle: .square
+                ),
+                SignalPurposeCard(
+                    title: "PARKING",
+                    description: "Marca una zona habilitada para estacionamiento.",
+                    kindLabel: "Señal informativa",
+                    icon: "parkingsign",
+                    accent: Color(red: 0.29, green: 0.53, blue: 0.98),
+                    signStyle: .square
+                )
             ],
             filter: .informative
         )
-    ]
-
-    private let bottomItems: [BottomBarItem] = [
-        BottomBarItem(title: "Inicio", icon: "house.fill"),
-        BottomBarItem(title: "Señales", icon: "triangle.circle.fill", isSelected: true),
-        BottomBarItem(title: "Trivia", icon: "questionmark.square.fill"),
-        BottomBarItem(title: "Reportar", icon: "exclamationmark.circle.fill"),
-        BottomBarItem(title: "Perfil", icon: "person.fill")
     ]
 
     private var visibleSections: [SignalPurposeSection] {
@@ -101,8 +166,6 @@ struct PropositosSeñalesView: View {
                     .padding(.top, 14)
                     .padding(.bottom, 28)
                 }
-
-                bottomBar
             }
         }
         .toolbar(.hidden, for: .navigationBar)
@@ -115,19 +178,22 @@ struct PropositosSeñalesView: View {
                 .foregroundStyle(.white)
 
             HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(width: 36, height: 36)
+                if showsBackButton {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundStyle(.white)
+                            .frame(width: 36, height: 36)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
 
                 Spacer()
 
                 Button {
+                    onShowCatalog?()
                 } label: {
                     Image(systemName: "info.circle.fill")
                         .font(.system(size: 18, weight: .semibold))
@@ -185,40 +251,15 @@ struct PropositosSeñalesView: View {
         }
     }
 
-    private var bottomBar: some View {
-        HStack {
-            ForEach(bottomItems) { item in
-                VStack(spacing: 6) {
-                    Image(systemName: item.icon)
-                        .font(.system(size: 16, weight: item.isSelected ? .bold : .semibold))
-                    Text(item.title)
-                        .font(.system(size: 10, weight: .semibold))
-                }
-                .frame(maxWidth: .infinity)
-                .foregroundStyle(item.isSelected ? Color(red: 0.27, green: 0.58, blue: 0.99) : Color.white.opacity(0.42))
-            }
-        }
-        .padding(.horizontal, 18)
-        .padding(.top, 14)
-        .padding(.bottom, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color(red: 0.08, green: 0.11, blue: 0.16))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(Color.white.opacity(0.04), lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.25), radius: 18, y: -4)
-        )
-        .padding(.horizontal, 12)
-        .padding(.bottom, 8)
-    }
 }
 
 private struct SignalSectionView: View {
     let section: SignalPurposeSection
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 3)
+    private let columns = [
+        GridItem(.flexible(), spacing: 14),
+        GridItem(.flexible(), spacing: 14)
+    ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -252,34 +293,25 @@ private struct SignalPurposeCardView: View {
     let card: SignalPurposeCard
 
     var body: some View {
-        VStack(spacing: 14) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 18, style: .continuous)
-                    .fill(card.accent.opacity(0.12))
-                    .frame(width: 48, height: 48)
-
-                if card.diamond {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .stroke(card.accent.opacity(0.8), lineWidth: 2)
-                        .frame(width: 38, height: 38)
-                        .rotationEffect(.degrees(45))
-                }
-
-                Image(systemName: card.icon)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(card.accent)
-            }
+        VStack(alignment: .leading, spacing: 12) {
+            signArtwork
 
             Text(card.title)
-                .font(.system(size: 11, weight: .bold))
-                .foregroundStyle(.white.opacity(0.9))
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.8)
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            Text(card.description)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color.white.opacity(0.62))
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(card.kindLabel)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(card.accent)
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 108)
-        .padding(.horizontal, 8)
+        .frame(minHeight: 236, alignment: .topLeading)
+        .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color.white.opacity(0.05))
@@ -288,6 +320,61 @@ private struct SignalPurposeCardView: View {
                         .stroke(Color.white.opacity(0.04), lineWidth: 1)
                 )
         )
+    }
+
+    private var signArtwork: some View {
+        RoundedRectangle(cornerRadius: 22, style: .continuous)
+            .fill(card.accent.opacity(0.1))
+            .frame(height: 118)
+            .overlay {
+                ZStack {
+                    switch card.signStyle {
+                    case .diamond:
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(Color(red: 0.22, green: 0.21, blue: 0.24))
+                            .frame(width: 62, height: 62)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(card.accent, lineWidth: 3)
+                            )
+                            .rotationEffect(.degrees(45))
+                    case .circle:
+                        Circle()
+                            .fill(card.accent)
+                            .frame(width: 62, height: 62)
+                            .overlay(
+                                Circle()
+                                    .stroke(.white, lineWidth: 6)
+                            )
+                    case .square:
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(card.accent)
+                            .frame(width: 62, height: 62)
+                    case .octagon:
+                        OctagonShape()
+                            .fill(card.accent)
+                            .frame(width: 66, height: 66)
+                    case .speedLimit:
+                        Circle()
+                            .fill(.white)
+                            .frame(width: 64, height: 64)
+                            .overlay(
+                                Circle()
+                                    .stroke(card.accent, lineWidth: 5)
+                            )
+                    }
+
+                    if card.signStyle == .speedLimit {
+                        Text("80")
+                            .font(.system(size: 22, weight: .black, design: .rounded))
+                            .foregroundStyle(.black)
+                    } else {
+                        Image(systemName: card.icon)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(card.signStyle == .circle ? .white : card.accent)
+                    }
+                }
+            }
     }
 }
 
@@ -303,16 +390,40 @@ private struct SignalPurposeSection: Identifiable {
 private struct SignalPurposeCard: Identifiable {
     let id = UUID()
     let title: String
+    let description: String
+    let kindLabel: String
     let icon: String
     let accent: Color
-    var diamond: Bool = false
+    let signStyle: SignalPurposeSignStyle
 }
 
-private struct BottomBarItem: Identifiable {
-    let id = UUID()
-    let title: String
-    let icon: String
-    var isSelected: Bool = false
+private enum SignalPurposeSignStyle {
+    case octagon
+    case circle
+    case speedLimit
+    case diamond
+    case square
+}
+
+private struct OctagonShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        let width = rect.width
+        let height = rect.height
+        let insetX = width * 0.28
+        let insetY = height * 0.28
+
+        var path = Path()
+        path.move(to: CGPoint(x: insetX, y: 0))
+        path.addLine(to: CGPoint(x: width - insetX, y: 0))
+        path.addLine(to: CGPoint(x: width, y: insetY))
+        path.addLine(to: CGPoint(x: width, y: height - insetY))
+        path.addLine(to: CGPoint(x: width - insetX, y: height))
+        path.addLine(to: CGPoint(x: insetX, y: height))
+        path.addLine(to: CGPoint(x: 0, y: height - insetY))
+        path.addLine(to: CGPoint(x: 0, y: insetY))
+        path.closeSubpath()
+        return path
+    }
 }
 
 private enum SignalPurposeFilter: String, CaseIterable, Identifiable {

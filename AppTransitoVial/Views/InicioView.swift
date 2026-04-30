@@ -4,11 +4,11 @@
 //
 //  Created by Emanuel Perez Altuzar on 10/03/26.
 //
+
 import SwiftUI
 import UIKit
 
 struct InicioView: View {
-    
     @State private var seleccion: Int = 1
 
     init() {
@@ -39,13 +39,56 @@ struct InicioView: View {
     }
     
     var body: some View {
-        
         TabView(selection: $seleccion) {
-            
+            InicioTabRootView()
+                .tabItem {
+                    Label("Inicio", systemImage: "house")
+                }
+                .tag(1)
+
+            NavigationStack {
+                CatalogoSenalView(showsBackButton: false)
+            }
+            .tabItem {
+                Label("Catalago", systemImage: "rectangle.3.group")
+            }
+            .tag(2)
+
+            PropositosTabRootView()
+            .tabItem {
+                Label("Propósitos", systemImage: "exclamationmark.triangle.fill")
+            }
+            .tag(3)
+
+            NavigationStack {
+                PerfilView()
+            }
+            .tabItem {
+                Label("Lecciones", systemImage: "graduationcap.fill")
+            }
+            .tag(4)
+        }
+        .tint(.blue)
+        .toolbarBackground(Color(red: 0.05, green: 0.08, blue: 0.12), for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+        .toolbarColorScheme(.dark, for: .tabBar)
+    }
+}
+
+private enum InicioRoute: Hashable {
+    case signalPurposes
+    case signalCatalog
+}
+
+private struct InicioTabRootView: View {
+    @State private var navigationPath = NavigationPath()
+
+    var body: some View {
+        NavigationStack(path: $navigationPath) {
             ZStack {
                 Color(Color.background)
                     .ignoresSafeArea()
-                
+
                 VStack(spacing: 25) {
                     HStack {
                         Image(systemName: "line.3.horizontal")
@@ -58,18 +101,18 @@ struct InicioView: View {
                     }
                     .foregroundColor(.white)
                     .padding(.horizontal)
-                    
+
                     ZStack(alignment: .bottomLeading) {
                         RoundedRectangle(cornerRadius: 25)
                             .fill(Color.gray.opacity(0.3))
                             .frame(height: 220)
-                        
+
                         Image("calle")
                             .resizable()
                             .scaledToFill()
                             .frame(height: 220)
                             .clipShape(RoundedRectangle(cornerRadius: 25))
-                        
+
                         HStack {
                             Image(systemName: "checkmark.shield.fill")
                                 .foregroundColor(.blue)
@@ -81,23 +124,25 @@ struct InicioView: View {
                         .padding()
                     }
                     .padding(.horizontal)
-                    
+
                     VStack(spacing: 10) {
                         Text("¡Bienvenido a\nSeñalVial!")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
-                        
+
                         Text("Aprende el significado de las señales de tránsito y ayuda a mejorar la seguridad vial de tu ciudad.")
                             .font(.body)
                             .foregroundColor(.gray)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, 30)
                     }
-                    
+
                     VStack(spacing: 15) {
-                        Button(action: {}) {
+                        Button {
+                            navigationPath.append(InicioRoute.signalPurposes)
+                        } label: {
                             Label("Ver señales de tránsito", systemImage: "book.fill")
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -105,53 +150,60 @@ struct InicioView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(15)
                         }
-                        
-                        Button(action: {}) {
-                            Label("Reportar una señal", systemImage: "camera.fill")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.white.opacity(0.1))
-                                .foregroundColor(.white)
-                                .cornerRadius(15)
-                        }
                     }
                     .padding(.horizontal)
-                    
+
                     HStack(spacing: 15) {
-                        InfoCard(icon: "graduationcap.fill", title: "Lecciones", subtitle: "12 nuevas guías", color: .blue)
-                        InfoCard(icon: "star.fill", title: "Progreso", subtitle: "Nivel 4 Alcanzado", color: .yellow)
+                        InfoCard(icon: "graduationcap.fill", title: "Lecciones", subtitle: " Completadas ", color: .blue)
+                        InfoCard(icon: "star.fill", title: "Progreso", subtitle: "Nivel  ", color: .yellow)
                     }
                     .padding(.horizontal)
-                    
+
                     Spacer()
                 }
             }
-            .tabItem {
-                Label("Inicio", systemImage: "house")
+            .navigationDestination(for: InicioRoute.self) { route in
+                switch route {
+                case .signalPurposes:
+                    PropositosSeñalesView(
+                        onShowCatalog: {
+                            navigationPath.append(InicioRoute.signalCatalog)
+                        },
+                        showsBackButton: true
+                    )
+                case .signalCatalog:
+                    CatalogoSenalView(showsBackButton: true)
+                }
             }
-            
-            CatalogoSenalView()
-                .tabItem {
-                    Label("Catalago", systemImage: "rectangle.3.group")
-                }
-                .tag(2)
-            
-            PropositosSeñalesView()
-                .tabItem {
-                    Label("Propósitos", systemImage: "exclamationmark.triangle.fill")
-                }
-            .tag(3)
-            
-            PerfilView()
-                .tabItem {
-                    Label("Perfil", systemImage: "person.crop.circle")
-                }
-            
         }
-        .tint(.blue)
-        .toolbarBackground(Color(red: 0.05, green: 0.08, blue: 0.12), for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
-        .toolbarColorScheme(.dark, for: .tabBar)
+    }
+}
+
+private struct PropositosTabRootView: View {
+    @State private var navigationPath = NavigationPath()
+
+    var body: some View {
+        NavigationStack(path: $navigationPath) {
+            PropositosSeñalesView(
+                onShowCatalog: {
+                    navigationPath.append(InicioRoute.signalCatalog)
+                },
+                showsBackButton: false
+            )
+            .navigationDestination(for: InicioRoute.self) { route in
+                switch route {
+                case .signalPurposes:
+                    PropositosSeñalesView(
+                        onShowCatalog: {
+                            navigationPath.append(InicioRoute.signalCatalog)
+                        },
+                        showsBackButton: true
+                    )
+                case .signalCatalog:
+                    CatalogoSenalView(showsBackButton: true)
+                }
+            }
+        }
     }
 }
 
