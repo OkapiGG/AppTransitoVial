@@ -8,134 +8,207 @@
 import SwiftUI
 
 struct CatalogoSenalView: View {
-    @State private var searchText = ""
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
+    @Environment(\.dismiss) private var dismiss
+    @StateObject private var viewModel = CatalogoSenalViewModel()
+    let showsBackButton: Bool
+
+    init(showsBackButton: Bool = true) {
+        self.showsBackButton = showsBackButton
+    }
+
     var body: some View {
-        NavigationView {
-            
-            VStack(spacing: 15) {
-                Text("Señales Comunes")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .padding(.top)
-                HStack {
-                    HStack {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundColor(.gray)
-                        TextField("Buscar señal...", text: $searchText)
-                            .foregroundColor(.primary)
+        ZStack {
+            AppTheme.screenBackground
+                .ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                header
+                searchBar
+                filterChips
+
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        ForEach(viewModel.visibleSections) { section in
+                            SignalCatalogSectionView(section: section)
+                        }
                     }
-                    .padding(10)
-                    .background(Color(.systemGray5))
-                    .cornerRadius(12)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal)
-                HStack(spacing: 10) {
-                    Button(action: {}) {
-                        Text("Todas")
-                            .frame(maxWidth: .infinity)
-                            .padding(10)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
+            }
+            .padding(.top, 8)
+        }
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private var header: some View {
+        ZStack {
+            Text("Catalagos de Señales")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            HStack {
+                if showsBackButton {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "arrow.left")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 40, height: 40)
                     }
-                    Button(action: {}) {
-                        Text("Reglamentarias")
-                            .font(.caption)
-                            .frame(maxWidth: .infinity)
-                            .padding(10)
-                            .background(Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                    Button(action: {}) {
-                        Text("Preventivas")
-                            .frame(maxWidth: .infinity)
-                            .padding(10)
-                            .background(Color.gray)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                    
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal)
-                ScrollView {
-                    LazyVGrid(columns: columns, spacing: 20) {
-                        SignalCard(
-                            title: "Alto",
-                            description: "Obligatorio detenerse por completo antes de avanzar.",
-                            icon: "hand.raised.fill",
-                            color: .red
-                        )
-                        SignalCard(
-                            title: "Ceda el paso",
-                            description: "Dar prioridad a los vehículos que ya están circulando.",
-                            icon: "triangle.fill",
-                            color: .blue
-                        )
-                        SignalCard(
-                            title: "Semáforo",
-                            description: "Seguir las indicaciones de las luces de tránsito.",
-                            icon: "trafficlight.fill",
-                            color: .yellow
-                        )
-                        SignalCard(
-                            title: "Cruce peatonal",
-                            description: "Zona designada para el paso seguro de peatones.",
-                            icon: "figure.walk",
-                            color: .blue
-                        )
-                        SignalCard(
-                            title: "Límite velocidad",
-                            description: "Máximo de velocidad permitido en este tramo.",
-                            icon: "speedometer",
-                            color: .gray
-                        )
-                        SignalCard(
-                            title: "Curva peligrosa",
-                            description: "Indica una reducción de velocidad por giro cerrado.",
-                            icon: "arrow.turn.up.right",
-                            color: .orange
-                        )
+
+                Spacer()
+            }
+        }
+        .padding(.horizontal, 20)
+    }
+
+    private var searchBar: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(Color.white.opacity(0.42))
+
+            TextField("", text: $viewModel.searchText, prompt: Text("Buscar señal por nombre o uso").foregroundStyle(Color.white.opacity(0.28)))
+                .foregroundStyle(.white)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+        }
+        .padding(.horizontal, 14)
+        .frame(height: 48)
+        .background(AppTheme.searchFieldBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal, 20)
+    }
+
+    private var filterChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(SignalCatalogFilter.allCases) { category in
+                    Button {
+                        viewModel.selectedCategory = category
+                    } label: {
+                        HStack(spacing: 6) {
+                            if let icon = category.icon {
+                                Image(systemName: icon)
+                                    .font(.system(size: 11, weight: .bold))
+                            }
+
+                            Text(category.title)
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 14)
+                        .frame(height: 36)
+                        .background(viewModel.selectedCategory == category ? category.activeColor : AppTheme.chipBackground)
+                        .clipShape(Capsule())
                     }
-                    .padding()
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 20)
+        }
+    }
+}
+
+private struct SignalCatalogSectionView: View {
+    let section: SignalCatalogSection
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 14),
+        GridItem(.flexible(), spacing: 14)
+    ]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .top, spacing: 10) {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(section.accent)
+                    .frame(width: 5, height: 30)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(section.title)
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(.white)
+
+                    Text(section.description)
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+
+            LazyVGrid(columns: columns, spacing: 16) {
+                ForEach(section.signals) { signal in
+                    SignalCatalogCard(item: signal)
                 }
             }
         }
     }
 }
 
-struct SignalCard: View {
-    var title: String
-    var description: String
-    var icon: String
-    var color: Color
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(Color(.systemGray6))
-                    .frame(height: 100)
-                Image(systemName: icon)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 40)
-                    .foregroundColor(color)
-            }
-            Text(title)
-                .font(.headline)
-            Text(description)
-                .font(.caption)
-                .foregroundColor(.gray)
-            Button(action: {}) {
-                Text("Ver más >")
-                    .font(.caption)
-                    .foregroundColor(.blue)
-            }
+private struct SignalCatalogCard: View {
+    let item: SignalCatalogItem
+    
+    private func customOrSystemImage(named name: String) -> Image {
+        if UIImage(named: name) != nil {
+            return Image(name)
+        } else {
+            return Image(systemName: name)
         }
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(item.accent.opacity(0.12))
+                    .frame(height: 92)
+
+                if item.diamond {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(item.accent.opacity(0.8), lineWidth: 2)
+                        .frame(width: 48, height: 48)
+                        .rotationEffect(.degrees(45))
+                }
+
+                if UIImage(named: item.icon) != nil {
+                    customOrSystemImage(named: item.icon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 48, height: 48)
+                } else {
+                    customOrSystemImage(named: item.icon)
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(item.accent)
+                }
+            }
+
+            Text(item.title)
+                .font(.headline)
+                .foregroundStyle(.white)
+
+            Text(item.description)
+                .font(.caption)
+                .foregroundStyle(AppTheme.mutedText)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(item.classificationText)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(item.accent)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(AppTheme.cardBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(AppTheme.cardBorder, lineWidth: 1)
+                )
+        )
     }
 }
 

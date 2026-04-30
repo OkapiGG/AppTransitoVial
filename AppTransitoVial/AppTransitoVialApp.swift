@@ -11,7 +11,7 @@ import SwiftUI
 struct AppTransitoVialApp: App {
     var body: some Scene {
         WindowGroup {
-            ReportsView()
+            InicioView()
         }
     }
 }

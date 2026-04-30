@@ -11,6 +11,8 @@ import MapKit
 struct MapCard: View {
     
     @StateObject private var ubicacion = MapViewModel()
+    @Binding var selectedLocationName: String
+    @Binding var selectedCoordinate: CLLocationCoordinate2D?
     
     
     var body: some View {
@@ -24,7 +26,8 @@ struct MapCard: View {
                     Spacer()
                                 
                     Button(action: {
-                        
+                        ubicacion.seleccionarUbicacionActual()
+                        syncSelectedLocation()
                     }) {
                         Label("Mi ubicación", systemImage: "mappin.and.ellipse")
                             .font(.subheadline)
@@ -32,6 +35,17 @@ struct MapCard: View {
                         }
                     
                 }.padding(.horizontal)
+
+                HStack {
+                    Text(selectedLocationName)
+                        .font(.caption)
+                        .foregroundStyle(Color.white.opacity(0.7))
+                        .lineLimit(2)
+
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 8)
                 
                 Map(position: $ubicacion.ubicacion){
                     UserAnnotation()
@@ -39,13 +53,25 @@ struct MapCard: View {
                     MapUserLocationButton()
                 }.onAppear {
                     ubicacion.pedirPermisoUbicacion()
+                    syncSelectedLocation()
+                }
+                .onReceive(ubicacion.$currentLocationName) { value in
+                    selectedLocationName = value
+                }
+                .onReceive(ubicacion.$currentCoordinate) { coordinate in
+                    selectedCoordinate = coordinate
                 }
                 .frame(height: 200)
             }
         }
     }
+
+    private func syncSelectedLocation() {
+        selectedLocationName = ubicacion.currentLocationName
+        selectedCoordinate = ubicacion.currentCoordinate
+    }
 }
 
 #Preview {
-    MapCard()
+    MapCard(selectedLocationName: .constant("Ubicación no seleccionada"), selectedCoordinate: .constant(nil))
 }
