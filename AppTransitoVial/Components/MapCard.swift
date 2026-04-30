@@ -27,8 +27,7 @@ struct MapCard: View {
                                 
                     Button(action: {
                         ubicacion.seleccionarUbicacionActual()
-                        selectedLocationName = ubicacion.currentLocationName
-                        selectedCoordinate = ubicacion.currentCoordinate
+                        syncSelectedLocation()
                     }) {
                         Label("Mi ubicación", systemImage: "mappin.and.ellipse")
                             .font(.subheadline)
@@ -54,20 +53,22 @@ struct MapCard: View {
                     MapUserLocationButton()
                 }.onAppear {
                     ubicacion.pedirPermisoUbicacion()
+                    syncSelectedLocation()
                 }
                 .onReceive(ubicacion.$currentLocationName) { value in
-                    if selectedLocationName == "Ubicación no seleccionada" || selectedLocationName == "No fue posible obtener la ubicación" {
-                        selectedLocationName = value
-                    }
+                    selectedLocationName = value
                 }
                 .onReceive(ubicacion.$currentCoordinate) { coordinate in
-                    if selectedCoordinate == nil {
-                        selectedCoordinate = coordinate
-                    }
+                    selectedCoordinate = coordinate
                 }
                 .frame(height: 200)
             }
         }
+    }
+
+    private func syncSelectedLocation() {
+        selectedLocationName = ubicacion.currentLocationName
+        selectedCoordinate = ubicacion.currentCoordinate
     }
 }
 

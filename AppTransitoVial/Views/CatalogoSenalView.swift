@@ -10,50 +10,55 @@ import SwiftUI
 struct CatalogoSenalView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = CatalogoSenalViewModel()
+    let showsBackButton: Bool
+
+    init(showsBackButton: Bool = true) {
+        self.showsBackButton = showsBackButton
+    }
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color(red: 0.06, green: 0.09, blue: 0.13)
-                    .ignoresSafeArea()
+        ZStack {
+            AppTheme.screenBackground
+                .ignoresSafeArea()
 
-                VStack(spacing: 16) {
-                    header
-                    searchBar
-                    filterChips
+            VStack(spacing: 16) {
+                header
+                searchBar
+                filterChips
 
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 22) {
-                            ForEach(viewModel.visibleSections) { section in
-                                SignalCatalogSectionView(section: section)
-                            }
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        ForEach(viewModel.visibleSections) { section in
+                            SignalCatalogSectionView(section: section)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.bottom, 24)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 }
-                .padding(.top, 8)
             }
-            .toolbar(.hidden, for: .navigationBar)
+            .padding(.top, 8)
         }
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     private var header: some View {
         ZStack {
-            Text("Clasificación de Señales")
+            Text("Catalagos de Señales")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
             HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "arrow.left")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .frame(width: 40, height: 40)
+                if showsBackButton {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "arrow.left")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 40, height: 40)
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
 
                 Spacer()
             }
@@ -73,7 +78,7 @@ struct CatalogoSenalView: View {
         }
         .padding(.horizontal, 14)
         .frame(height: 48)
-        .background(Color.white.opacity(0.08))
+        .background(AppTheme.searchFieldBackground)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .padding(.horizontal, 20)
     }
@@ -97,7 +102,7 @@ struct CatalogoSenalView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 14)
                         .frame(height: 36)
-                        .background(viewModel.selectedCategory == category ? category.activeColor : Color.white.opacity(0.08))
+                        .background(viewModel.selectedCategory == category ? category.activeColor : AppTheme.chipBackground)
                         .clipShape(Capsule())
                     }
                     .buttonStyle(.plain)
@@ -130,7 +135,7 @@ private struct SignalCatalogSectionView: View {
 
                     Text(section.description)
                         .font(.subheadline)
-                        .foregroundStyle(Color.white.opacity(0.55))
+                        .foregroundStyle(AppTheme.secondaryText)
                         .fixedSize(horizontal: false, vertical: true)
                 }
             }
@@ -146,6 +151,14 @@ private struct SignalCatalogSectionView: View {
 
 private struct SignalCatalogCard: View {
     let item: SignalCatalogItem
+    
+    private func customOrSystemImage(named name: String) -> Image {
+        if UIImage(named: name) != nil {
+            return Image(name)
+        } else {
+            return Image(systemName: name)
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -161,9 +174,16 @@ private struct SignalCatalogCard: View {
                         .rotationEffect(.degrees(45))
                 }
 
-                Image(systemName: item.icon)
-                    .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(item.accent)
+                if UIImage(named: item.icon) != nil {
+                    customOrSystemImage(named: item.icon)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 48, height: 48)
+                } else {
+                    customOrSystemImage(named: item.icon)
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(item.accent)
+                }
             }
 
             Text(item.title)
@@ -172,7 +192,7 @@ private struct SignalCatalogCard: View {
 
             Text(item.description)
                 .font(.caption)
-                .foregroundStyle(Color.white.opacity(0.65))
+                .foregroundStyle(AppTheme.mutedText)
                 .fixedSize(horizontal: false, vertical: true)
 
             Text(item.classificationText)
@@ -182,11 +202,11 @@ private struct SignalCatalogCard: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
-            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.white.opacity(0.05))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(AppTheme.cardBackground)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(AppTheme.cardBorder, lineWidth: 1)
                 )
         )
     }
