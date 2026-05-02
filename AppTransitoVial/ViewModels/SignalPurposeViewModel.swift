@@ -2,7 +2,7 @@
 //  SignalPurposeViewModel.swift
 //  AppTransitoVial
 //
-//  Created by Codex on 30/04/26.
+//  Created by Alan Cervantes on 30/04/26.
 //
 
 import Combine

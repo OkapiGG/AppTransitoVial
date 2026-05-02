@@ -142,7 +142,12 @@ private struct SignalCatalogSectionView: View {
 
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(section.signals) { signal in
-                    SignalCatalogCard(item: signal)
+                    NavigationLink{
+                        SenalDetalleView(item: signal)
+                    } label: {
+                        SignalCatalogCard(item: signal)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }

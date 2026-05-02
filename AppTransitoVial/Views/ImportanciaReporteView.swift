@@ -2,7 +2,7 @@
 //  ImportanciaReporteView.swift
 //  AppTransitoVial
 //
-//  Created by Codex on 18/04/26.
+//  Created by Alan Cervantes on 18/04/26.
 //
 
 import SwiftUI
